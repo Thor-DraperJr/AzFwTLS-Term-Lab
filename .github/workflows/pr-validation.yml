@@ -1,0 +1,88 @@
+name: Pull Request Validation
+
+on:
+  pull_request:
+    branches: [ main, master ]
+    paths:
+    - 'bicep/**'
+    - 'scripts/**'
+    - '.github/workflows/**'
+
+jobs:
+  bicep-validation:
+    name: Validate Bicep Changes
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Azure CLI
+      uses: azure/CLI@v1
+      with:
+        azcliversion: latest
+    
+    - name: Bicep Lint
+      run: |
+        echo "🔍 Running Bicep linting..."
+        
+        # Install Bicep CLI
+        az bicep install
+        
+        # Lint all Bicep files
+        find bicep/ -name "*.bicep" -exec az bicep build --file {} \;
+        
+        echo "✅ Bicep linting completed"
+    
+    - name: Script Validation
+      run: |
+        echo "🔍 Validating shell scripts..."
+        
+        # Check script syntax
+        find scripts/ -name "*.sh" -exec bash -n {} \;
+        
+        # Check for common issues
+        find scripts/ -name "*.sh" -exec grep -l "#!/bin/bash" {} \; | wc -l
+        
+        echo "✅ Script validation completed"
+    
+    - name: Security Check
+      run: |
+        echo "🔒 Running security checks..."
+        
+        # Check for secrets in code
+        if grep -r "password\|secret\|key" . --include="*.bicep" --include="*.sh" --exclude-dir=".git" | grep -v "SecureString\|keyVault\|KeyVault"; then
+          echo "⚠️  Warning: Potential secrets found in code"
+          exit 1
+        else
+          echo "✅ No hardcoded secrets detected"
+        fi
+
+  documentation-check:
+    name: Documentation Review
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Check Documentation
+      run: |
+        echo "📚 Checking documentation..."
+        
+        # Check if README is updated
+        if [ -f README.md ]; then
+          echo "✅ README.md exists"
+        else
+          echo "❌ README.md missing"
+          exit 1
+        fi
+        
+        # Check for documentation in docs/
+        if [ -d docs/ ]; then
+          echo "✅ Documentation directory exists"
+          echo "Documentation files:"
+          ls -la docs/
+        else
+          echo "⚠️  No docs directory found"
+        fi
+        
+        echo "✅ Documentation check completed"

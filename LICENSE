@@ -1,0 +1,39 @@
+MIT License
+
+Copyright (c) 2025 Thor Draper Jr
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+## Additional Terms for Educational Use
+
+This project is designed for educational and demonstration purposes. When using this software:
+
+1. **Lab Environment Only**: This configuration is intended for lab and learning environments only. Do not use in production without proper security review and hardening.
+
+2. **Security Considerations**: The default configurations prioritize ease of use and learning over security. Implement proper security measures before any production use.
+
+3. **Azure Costs**: Be aware that deploying Azure resources will incur costs. Monitor your Azure spending and clean up resources when not needed.
+
+4. **Compliance**: Ensure your use complies with your organization's policies and any applicable regulations.
+
+## Disclaimer
+
+This software is provided for educational purposes. The authors and contributors are not responsible for any costs, damages, or security issues that may arise from its use. Users are responsible for understanding Azure costs, security implications, and compliance requirements.

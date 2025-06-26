@@ -234,6 +234,47 @@ This lab showcases **AI-assisted Azure deployment** in action:
 - **Cloud Shell Ready:** Browser-based management option
 - **Comprehensive Docs:** Step-by-step guides and troubleshooting
 
+## 🔄 CI/CD Pipeline & GitHub Integration
+
+This lab now includes a comprehensive CI/CD pipeline with GitHub Actions:
+
+### 🚀 **Automated Workflows**
+- **Infrastructure Deployment**: Automated Bicep template deployment
+- **TLS Configuration**: Automated CA setup and certificate management
+- **Security Scanning**: Automated security and best practices validation
+- **Multi-Environment**: Dev, staging, and production environment support
+- **Pull Request Validation**: Automated code review and testing
+
+### 📋 **GitHub Actions Workflows**
+```bash
+# Manual deployment trigger
+.github/workflows/deploy-lab.yml
+
+# TLS configuration and testing  
+.github/workflows/tls-configuration.yml
+
+# Pull request validation
+.github/workflows/pr-validation.yml
+```
+
+### 🛠️ **Setup GitHub Actions**
+1. **Fork the repository**: https://github.com/Thor-DraperJr/AzFwTLS-Term-Lab
+2. **Set up Azure Service Principal**:
+   ```bash
+   # Create service principal
+   az ad sp create-for-rbac --name "azfw-tls-lab-sp" --role contributor \
+     --scopes /subscriptions/YOUR-SUBSCRIPTION-ID \
+     --sdk-auth
+   ```
+3. **Add GitHub Secrets**:
+   - `AZURE_CREDENTIALS`: Output from service principal creation
+4. **Trigger Workflows**: Use GitHub Actions tab or workflow_dispatch
+
+### 🌍 **Multi-Environment Support**
+- **Development**: Quick testing and validation
+- **Staging**: Full feature testing
+- **Production**: Production-ready deployments
+
 ## AI Integration Benefits Observed
 
 - **Rapid Iteration**: Quick deployment testing and adjustment
@@ -241,3 +282,4 @@ This lab showcases **AI-assisted Azure deployment** in action:
 - **Resource Management**: Efficient handling of Azure resource dependencies
 - **Documentation**: Real-time updates to project documentation
 - **Adaptive Strategy**: Turned capacity constraints into multi-region learning opportunity
+- **CI/CD Integration**: Automated pipeline creation with intelligent workflows

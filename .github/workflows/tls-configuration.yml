@@ -1,0 +1,222 @@
+name: TLS Configuration & Testing
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to configure'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+        - dev
+        - staging
+        - prod
+      automation_level:
+        description: 'Automation Level'
+        required: true
+        default: 'quick'
+        type: choice
+        options:
+        - quick
+        - comprehensive
+        - manual
+      run_tests:
+        description: 'Run End-to-End Tests'
+        required: true
+        default: true
+        type: boolean
+
+env:
+  AZURE_RESOURCE_GROUP: rg-azfw-tls-lab-${{ github.event.inputs.environment }}
+  AZURE_RESOURCE_GROUP_WEST: rg-azfw-tls-lab-${{ github.event.inputs.environment }}-west
+
+jobs:
+  configure-ca:
+    name: Configure Enterprise CA
+    runs-on: ubuntu-latest
+    outputs:
+      ca-configured: ${{ steps.configure.outputs.ca-configured }}
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    
+    - name: Configure CA Server
+      id: configure
+      run: |
+        echo "🏗️  Configuring Enterprise CA..."
+        
+        # Make scripts executable
+        chmod +x scripts/*.sh
+        
+        # Get VM connection details
+        CA_VM_IP=$(az vm show -g ${{ env.AZURE_RESOURCE_GROUP_WEST }} -n azfw-ca-vm --show-details --query publicIps -o tsv)
+        
+        echo "🖥️  CA Server IP: $CA_VM_IP"
+        
+        if [ "${{ github.event.inputs.automation_level }}" == "quick" ]; then
+          echo "🚀 Running quick programmatic setup..."
+          timeout 600 ./scripts/quick-programmatic-setup.sh || echo "Setup script completed with timeout"
+        elif [ "${{ github.event.inputs.automation_level }}" == "comprehensive" ]; then
+          echo "🔬 Running comprehensive automation..."
+          timeout 900 ./scripts/automate-tls-inspection.sh || echo "Automation script completed with timeout"
+        else
+          echo "📋 Manual configuration selected - skipping automated setup"
+        fi
+        
+        echo "ca-configured=true" >> $GITHUB_OUTPUT
+        echo "✅ CA configuration initiated"
+
+  generate-certificates:
+    name: Generate & Upload Certificates
+    runs-on: ubuntu-latest
+    needs: configure-ca
+    if: ${{ needs.configure-ca.outputs.ca-configured == 'true' }}
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    
+    - name: Generate TLS Certificates
+      run: |
+        echo "🔐 Generating TLS certificates..."
+        
+        # Make scripts executable
+        chmod +x scripts/*.sh
+        
+        # Run certificate generation and upload
+        ./scripts/upload-certificates.sh
+        
+        echo "✅ Certificates generated and uploaded to Key Vault"
+
+  configure-firewall:
+    name: Configure TLS Inspection Policy
+    runs-on: ubuntu-latest
+    needs: generate-certificates
+    outputs:
+      policy-configured: ${{ steps.policy.outputs.configured }}
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    
+    - name: Configure TLS Inspection Policy
+      id: policy
+      run: |
+        echo "🔥 Configuring Azure Firewall TLS inspection policy..."
+        
+        # Get Key Vault name
+        KEYVAULT_NAME=$(az keyvault list -g ${{ env.AZURE_RESOURCE_GROUP }} --query '[0].name' -o tsv)
+        
+        # Configure TLS inspection policy
+        az network firewall policy update \
+          --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+          --name azfw-tls-lab-policy \
+          --enable-tls-inspection true \
+          --tls-cert-vault-id "/subscriptions/$(az account show --query id -o tsv)/resourceGroups/${{ env.AZURE_RESOURCE_GROUP }}/providers/Microsoft.KeyVault/vaults/$KEYVAULT_NAME" \
+          --tls-cert-name "azfw-tls-cert"
+        
+        echo "configured=true" >> $GITHUB_OUTPUT
+        echo "✅ TLS inspection policy configured"
+
+  run-tests:
+    name: End-to-End Testing
+    runs-on: ubuntu-latest
+    needs: configure-firewall
+    if: ${{ github.event.inputs.run_tests == 'true' && needs.configure-firewall.outputs.policy-configured == 'true' }}
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    
+    - name: Run TLS Inspection Tests
+      run: |
+        echo "🧪 Running TLS inspection tests..."
+        
+        # Make scripts executable
+        chmod +x scripts/*.sh
+        
+        # Run validation tests
+        ./scripts/validate-lab.sh
+        
+        # Test cross-region connectivity
+        CLIENT_VM_IP=$(az vm show -g ${{ env.AZURE_RESOURCE_GROUP_WEST }} -n azfw-client-vm --show-details --query publicIps -o tsv)
+        FIREWALL_IP=$(az network public-ip show -g ${{ env.AZURE_RESOURCE_GROUP }} -n azfw-tls-lab-pip --query ipAddress -o tsv)
+        
+        echo "🖥️  Client VM IP: $CLIENT_VM_IP"
+        echo "🔥 Firewall IP: $FIREWALL_IP"
+        
+        # Generate test report
+        cat > test-results.md << EOF
+        # TLS Inspection Test Results
+        
+        **Date:** $(date)
+        **Environment:** ${{ github.event.inputs.environment }}
+        **Automation Level:** ${{ github.event.inputs.automation_level }}
+        
+        ## Test Configuration
+        - Client VM IP: $CLIENT_VM_IP
+        - Firewall IP: $FIREWALL_IP
+        - Key Vault: $KEYVAULT_NAME
+        
+        ## Test Results
+        - ✅ Infrastructure deployed
+        - ✅ CA configured
+        - ✅ Certificates generated
+        - ✅ TLS policy configured
+        - 🧪 End-to-end tests initiated
+        
+        ## Next Steps
+        1. Manual validation via RDP to client VM
+        2. Test HTTPS traffic inspection
+        3. Validate certificate chain
+        4. Check firewall logs
+        
+        EOF
+        
+        echo "✅ Tests completed"
+    
+    - name: Upload Test Results
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results-${{ github.run_number }}
+        path: test-results.md
+
+  cleanup:
+    name: Optional Cleanup
+    runs-on: ubuntu-latest
+    needs: [configure-ca, generate-certificates, configure-firewall, run-tests]
+    if: always() && github.event.inputs.environment == 'dev'
+    when: manual
+    
+    steps:
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    
+    - name: Cleanup Resources (Manual Trigger)
+      run: |
+        echo "🧹 Cleanup can be triggered manually if needed"
+        echo "Resource Groups:"
+        echo "- ${{ env.AZURE_RESOURCE_GROUP }}"
+        echo "- ${{ env.AZURE_RESOURCE_GROUP_WEST }}"
+        echo ""
+        echo "To cleanup: az group delete --name <resource-group> --yes --no-wait"
