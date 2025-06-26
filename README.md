@@ -1,6 +1,38 @@
 # Azure Firewall TLS Inspection Lab with AI Integration
 
-This lab demonstrates how to set up Azure Firewall Premium with TLS inspection using an Enterprise CA certificate, leveraging AI tools for automation and simplification.
+This lab demonstrates how to set up Azure Firewall Premium with TLS inspection using an Enterprise CA certificate, leveraging AI tools fo## 🎯 **RECOMMENDED: Enterprise CA Certificate Automation**
+
+### **🏆 Primary Option: Microsoft Documentation Automation**
+```bash
+# Automate the complete Microsoft Enterprise CA process
+./scripts/enterprise-ca-automation.sh all
+```
+
+**Why This is THE Solution You Wanted:**
+- 🎯 **Automates Microsoft's exact documentation process**
+- 📤 **Pulls intermediate certificates from Enterprise CA**
+- 🔐 **Uploads certificates to Azure Firewall via Key Vault**
+- 🛡️ **Configures TLS inspection following best practices**
+- 🧪 **Validates TLS inspection end-to-end**
+- 📊 **Generates professional HTML reports**
+
+**Alternative Enterprise CA Scripts:**
+```bash
+# Simplified Microsoft documentation process
+./scripts/microsoft-enterprise-ca-automation.sh all
+
+# Enhanced version with advanced features
+./scripts/enhanced-enterprise-ca-automation.sh all
+```
+
+### **📖 Complete Documentation**
+See [`docs/enterprise-ca-complete-automation-guide.md`](docs/enterprise-ca-complete-automation-guide.md) for comprehensive guide.
+
+### **🏆 Legacy Option: Master Automation Script**
+```bash
+# The original comprehensive automation solution
+./scripts/master-automation.sh full
+```d simplification.
 
 ## Architecture Overview
 
@@ -125,46 +157,152 @@ This lab showcases **AI-assisted Azure deployment** in action:
 - **Backup Region (West US 2)**: CA Server VM, Client VM, VNet
 
 🚀 **Ready to Start Testing**: 
-1. **🤖 Programmatic Setup** (Recommended): `./scripts/quick-programmatic-setup.sh` - Full automation
-2. **📋 Manual Setup**: `./scripts/start-testing.sh` - Step-by-step guidance  
-3. **📖 Detailed Guide**: `docs/testing-guide.md` - Complete instructions
 
-### Quick Start Options
+## 🎯 **NEW: Enterprise CA Automation (Microsoft Docs Compliant)**
 
-#### Option A: Fully Automated (5-10 minutes)
+### **🏆 FEATURED: Complete Enterprise CA Certificate Deployment**
 ```bash
-# Complete automation - no RDP needed
-./scripts/quick-programmatic-setup.sh
+# Implements Microsoft's official documentation step-by-step:
+# https://learn.microsoft.com/en-us/azure/firewall/premium-deploy-certificates-enterprise-ca
+./scripts/enterprise-ca-automation.sh all
 ```
 
-#### Option B: Full Automation with Detailed Logging (15-20 minutes)  
+**🌟 Why This is the Ultimate Solution:**
+- ✅ **Microsoft Documentation Compliant** - Every step from official docs
+- 🏗️ **Enterprise-Grade PKI** - Production-ready certificate management  
+- 🤖 **Zero Manual Steps** - Pulls intermediate cert from CA automatically
+- 🔐 **Secure Transfer** - Base64 encoding, no file sharing needed
+- 📊 **Professional Reports** - HTML reports with validation results
+- 🎛️ **Modular Execution** - Run individual steps: template, extract, upload, configure, validate
+
+### **📋 What This Automation Does**
+1. **Creates Subordinate Certificate Template** on your CA server
+2. **Requests and Exports Certificate** with proper extensions
+3. **Uploads Certificate to Key Vault** with correct permissions
+4. **Configures Azure Firewall TLS Inspection** policy
+5. **Creates Application Rules** for HTTPS traffic inspection
+6. **Validates TLS Inspection** end-to-end
+
+### Testing Scenarios Enabled
+1. **Standard TLS Inspection**: VMs → Firewall → Internet
+2. **Cross-Region Connectivity**: West US VMs → East US Firewall → Internet
+3. **Regional Failover**: Primary to backup region scenarios
+4. **Certificate Distribution**: Multi-region CA certificate deployment
+
+This setup provides both **immediate lab functionality** and **real-world enterprise architecture experience**.
+
+## Quick Start Deployment
+
+Since you're already authenticated with Azure MCP server, you can continue the deployment:
+
+### Option 1: Use Azure MCP Server (Current Approach)
 ```bash
-# Comprehensive automation with testing
-./scripts/automate-tls-inspection.sh
+# Continue with VM deployment in West US 2
+# The Azure MCP server commands are being used to deploy step-by-step
 ```
 
-#### Option C: Manual/Interactive Setup
+### Option 2: Use Local Bicep Templates
 ```bash
-# Get connection info and manual guidance
-./scripts/start-testing.sh
+# Update parameters and deploy using Azure CLI
+./scripts/deploy-lab.sh deploy
+```
 
-# Monitor deployment status
-./scripts/monitor-deployment.sh
+## What We've Demonstrated
+
+This lab showcases **AI-assisted Azure deployment** in action:
+
+1. **Natural Language to Azure Commands**: Used Azure MCP server to translate deployment intentions into Azure CLI commands
+2. **Real-time Problem Solving**: When capacity issues arose, AI helped pivot to alternative regions
+3. **Iterative Deployment**: Building infrastructure piece by piece with AI guidance
+4. **Adaptive Planning**: Adjusting deployment strategy based on real Azure constraints
+
+## Next Steps
+
+✅ **Infrastructure Complete**: All Azure resources deployed successfully
+- **Primary Region (East US)**: Azure Firewall Premium, Key Vault, VNet
+- **Backup Region (West US 2)**: CA Server VM, Client VM, VNet
+
+🚀 **Ready to Start Testing**: 
+
+## 🎯 **RECOMMENDED: Master Automation Script**
+
+### **🏆 Primary Option: Complete Lab Automation**
+```bash
+# The definitive, referenceable automation solution
+./scripts/master-automation.sh full
+```
+
+**Why This is Recommended:**
+- ✅ **Complete end-to-end automation** (deploy + configure + test)
+- 📊 **Professional HTML reports** with detailed metrics
+- 🔍 **Comprehensive testing** including TLS inspection validation
+- � **Detailed logging** for troubleshooting and auditing
+- 🎛️ **Modular execution** (can run individual components)
+- 🔧 **Enterprise-grade** error handling and recovery
+
+### **Quick Start Options**
+
+#### Option 1: **Master Automation - Full Lab** (⭐ **RECOMMENDED**)
+```bash
+# Complete end-to-end automation with reporting
+./scripts/master-automation.sh full
+```
+
+#### Option 2: **Master Automation - Test Existing Lab**
+```bash
+# Comprehensive testing of existing infrastructure
+./scripts/master-automation.sh test
+```
+
+#### Option 3: **Master Automation - Status Check**
+```bash
+# Quick status check with professional report
+./scripts/master-automation.sh status
+```
+
+#### Option 4: **Interactive Quick Reference**
+```bash
+# Menu-driven interface for common operations
+./scripts/quick-ref.sh
+```
+
+### **Legacy Scripts (Still Available)**
+```bash
+# Original automation scripts
+./scripts/quick-programmatic-setup.sh      # Original full automation
+./scripts/automate-tls-inspection.sh       # Original TLS automation
+./scripts/start-testing.sh                 # Manual guidance
 ```
 
 ### Immediate Actions
+
+## 🎯 **MY TOP RECOMMENDATION FOR YOU**
+
+**🏆 Run this for complete Microsoft-compliant enterprise CA automation:**
+
 ```bash
-# Option 1: Full automation (Recommended)
-./scripts/quick-programmatic-setup.sh
+./scripts/enterprise-ca-automation.sh all
+```
 
-# Option 2: Comprehensive automation with testing  
-./scripts/automate-tls-inspection.sh
+**This NEW script will:**
+- ✅ Create subordinate certificate templates on your CA
+- 🔐 Generate and extract enterprise certificates
+- 📤 Upload certificates to Key Vault securely  
+- 🔍 Configure Azure Firewall TLS inspection policy
+- 📋 Create application rules for HTTPS inspection
+- 🧪 Validate end-to-end TLS inspection functionality
+- 📊 Generate professional HTML reports
 
-# Option 3: Manual setup guidance
-./scripts/start-testing.sh
+**Alternative comprehensive options:**
+```bash
+# Master automation (previous gold standard)
+./scripts/master-automation.sh full
 
-# Monitor status
-./scripts/monitor-deployment.sh
+# Interactive menu-driven approach
+./scripts/quick-ref.sh
+
+# Just test existing infrastructure
+./scripts/master-automation.sh test
 ```
 
 ### VM Connection Details
