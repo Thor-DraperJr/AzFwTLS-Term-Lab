@@ -173,6 +173,30 @@ This lab showcases **AI-assisted Azure deployment** in action:
 - **Username**: `azureadmin`
 - **Password**: `SecureP@ssw0rd123!`
 
+## 🧪 **Remote Testing Capabilities**
+
+### **Automated Remote Testing Scripts**
+```bash
+# Comprehensive testing (2-3 minutes)
+./scripts/remote-test-suite.sh
+
+# Quick TLS inspection test (30 seconds)
+./scripts/quick-tls-test.sh
+
+# Complete testing guide with connection details
+./scripts/test-tls-inspection.sh
+```
+
+### **Remote Test Features**
+- ✅ **No RDP Required**: Complete testing via Azure CLI commands
+- 🔍 **Comprehensive Coverage**: Infrastructure, TLS config, connectivity tests
+- 📊 **Detailed Reporting**: Pass/fail status with recommendations
+- 🎯 **TLS Inspection Verification**: Detects if HTTPS traffic is being inspected
+- 🔧 **Troubleshooting Guidance**: Identifies issues and provides solutions
+
+### **Testing Reference**
+See [`docs/testing-reference.md`](docs/testing-reference.md) for complete testing documentation.
+
 ## 📊 Session Summary - Day 1 Complete
 
 ### ✅ What We Accomplished Today
