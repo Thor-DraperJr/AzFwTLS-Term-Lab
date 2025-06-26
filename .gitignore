@@ -1,0 +1,73 @@
+# Azure and Bicep
+*.deployment
+*.deploymentParameters
+*.deploymentTemplate
+*.bicepparam
+deployment-outputs.json
+
+# PowerShell
+*.ps1xml
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+temp/
+tmp/
+*.tmp
+
+# Certificate files (for security)
+certificates/*.pfx
+certificates/*.p12
+certificates/*.key
+certificates/private/
+
+# Azure CLI cache
+.azure/
+
+# Environment variables and secrets
+.env
+.env.local
+*.env
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/settings.json
+.vscode/launch.json
+.idea/
+*.swp
+*.swo
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Runtime directories
+node_modules/
+bin/
+obj/
+
+# Test results
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
+
+# Build outputs
+dist/
+build/
+out/
+
+# Session-specific files (contain sensitive info)
+SESSION-NOTES.md
+SESSION-PAUSE-SUMMARY.md
