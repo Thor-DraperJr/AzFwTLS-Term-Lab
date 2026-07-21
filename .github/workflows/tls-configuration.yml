@@ -39,7 +39,7 @@ jobs:
       ca-configured: ${{ steps.configure.outputs.ca-configured }}
     
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     
     - name: Azure Login
       uses: azure/login@v1
@@ -79,7 +79,7 @@ jobs:
     if: ${{ needs.configure-ca.outputs.ca-configured == 'true' }}
     
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     
     - name: Azure Login
       uses: azure/login@v1
@@ -106,7 +106,7 @@ jobs:
       policy-configured: ${{ steps.policy.outputs.configured }}
     
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     
     - name: Azure Login
       uses: azure/login@v1
@@ -139,7 +139,7 @@ jobs:
     if: ${{ github.event.inputs.run_tests == 'true' && needs.configure-firewall.outputs.policy-configured == 'true' }}
     
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     
     - name: Azure Login
       uses: azure/login@v1
