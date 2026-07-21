@@ -1,16 +1,17 @@
-# Quick CA Setup for Azure Firewall TLS Inspection
+param(
+    [Parameter(Mandatory = $true)]
+    [SecureString]$PfxPassword
+)
+
+$ErrorActionPreference = 'Stop'
+
 try {
-    # Install AD CS
     Install-WindowsFeature -Name AD-Certificate -IncludeManagementTools
-    
-    # Configure CA
-    Install-AdcsCertificationAuthority -CAType EnterpriseRootCA -CACommonName "AzFirewall-TLS-Lab-CA" -CADistinguishedNameSuffix "DC=azfwlab,DC=local" -Force
-    
-    # Wait and create intermediate cert
-    Start-Sleep 20
-    
-    # Generate certificate for Azure Firewall
-    $req = @"
+    Install-AdcsCertificationAuthority -CAType EnterpriseRootCA -CACommonName 'AzFirewall-TLS-Lab-CA' -CADistinguishedNameSuffix 'DC=azfwlab,DC=local' -Force
+
+    Start-Sleep -Seconds 20
+
+    $request = @"
 [Version]
 Signature="`$Windows NT`$"
 [NewRequest]
@@ -22,24 +23,23 @@ RequestType=PKCS10
 [Extensions]
 2.5.29.19 = "{text}CA:TRUE&pathlength:0"
 "@
-    
-    New-Item -Path "C:\cert" -Type Directory -Force
-    $req | Out-File "C:\cert\req.inf" -Encoding ASCII
-    
-    certreq -new "C:\cert\req.inf" "C:\cert\req.req"
-    certreq -submit -config ".\AzFirewall-TLS-Lab-CA" "C:\cert\req.req" "C:\cert\cert.cer"
-    certreq -accept "C:\cert\cert.cer"
-    
-    # Export certificates
-    $cert = Get-ChildItem Cert:\LocalMachine\My | Where-Object {$_.Subject -like "*Azure-Firewall-Intermediate-CA*"}
-    $pwd = ConvertTo-SecureString "<REMOVED_FROM_HISTORY>" -AsPlainText -Force
-    Export-PfxCertificate -Cert $cert -FilePath "C:\cert\intermediate.pfx" -Password $pwd
-    
-    $root = Get-ChildItem Cert:\LocalMachine\Root | Where-Object {$_.Subject -like "*AzFirewall-TLS-Lab-CA*"}
-    Export-Certificate -Cert $root -FilePath "C:\cert\root.cer"
-    
-    "SUCCESS" > "C:\cert\status.txt"
+
+    New-Item -Path 'C:\cert' -ItemType Directory -Force | Out-Null
+    $request | Out-File 'C:\cert\req.inf' -Encoding ASCII
+
+    certreq -new 'C:\cert\req.inf' 'C:\cert\req.req'
+    certreq -submit -config '.\AzFirewall-TLS-Lab-CA' 'C:\cert\req.req' 'C:\cert\cert.cer'
+    certreq -accept 'C:\cert\cert.cer'
+
+    $certificate = Get-ChildItem Cert:\LocalMachine\My | Where-Object { $_.Subject -like '*Azure-Firewall-Intermediate-CA*' } | Select-Object -First 1
+    Export-PfxCertificate -Cert $certificate -FilePath 'C:\cert\intermediate.pfx' -Password $PfxPassword
+
+    $rootCertificate = Get-ChildItem Cert:\LocalMachine\Root | Where-Object { $_.Subject -like '*AzFirewall-TLS-Lab-CA*' } | Select-Object -First 1
+    Export-Certificate -Cert $rootCertificate -FilePath 'C:\cert\root.cer'
+
+    'SUCCESS' | Set-Content 'C:\cert\status.txt'
 } catch {
-    $_.Exception.Message > "C:\cert\error.txt"
-    "FAILED" > "C:\cert\status.txt"
+    $_.Exception.Message | Set-Content 'C:\cert\error.txt'
+    'FAILED' | Set-Content 'C:\cert\status.txt'
+    throw
 }
