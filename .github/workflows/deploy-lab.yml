@@ -51,7 +51,7 @@ jobs:
           az version
     
     - name: Azure Login
-      uses: azure/login@v1
+      uses: azure/login@v3
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
     
@@ -118,7 +118,7 @@ jobs:
     - uses: actions/checkout@v4
     
     - name: Azure Login
-      uses: azure/login@v1
+      uses: azure/login@v3
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
     
@@ -178,7 +178,7 @@ jobs:
     - uses: actions/checkout@v4
     
     - name: Azure Login
-      uses: azure/login@v1
+      uses: azure/login@v3
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
     
